@@ -12,6 +12,6 @@
 
 #include <bitset>
 #include <cmath>
-
+#include <string>
 
 #endif

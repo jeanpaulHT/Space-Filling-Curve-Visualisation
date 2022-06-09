@@ -1,12 +1,13 @@
 #include "headers.h"
 #include "z-order.hpp"
-
+#include "gray-order.hpp"
 
 
 
 int main(){
 
-    ZCORD::draw();
+    zcord::draw();
+    gray::draw();
     return 0;
 
 }
