@@ -69,15 +69,18 @@ namespace drawer{
         auto p1 = cord.begin();
         for(auto p2 =  cord.begin()+ 1; p2 != cord.end();p2++){
             
-
             PType a = p1->first;
             PType b = p2->first;
 
-            projectToScreen(a);
-            projectToScreen(b);
-            
 
-            cv::line(imagen, a, b, colorLine, grosor);
+            if(adj(a,b)){
+                projectToScreen(a);
+                projectToScreen(b);
+                cv::line(imagen, a, b, colorLine, grosor);            
+            }
+            else{
+                
+            }
             p1++;
         }
 
