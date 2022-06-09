@@ -14,7 +14,7 @@ namespace drawer{
 
 
     typedef std::function<int(int,int)> cord_func;
-    typedef  cv::Point PType;
+    typedef  cv::Point2f PType;
 
 
 
@@ -27,7 +27,7 @@ namespace drawer{
             
             for(int x = 0; x< SIDEDIM; x++){
                 int cord = pFunc(x,y);
-                res.push_back(  {PType{ x,y}, cord } ); 
+                res.push_back(  {PType{  (float) x, (float) y}, cord } ); 
 
             }
         }
@@ -44,7 +44,7 @@ namespace drawer{
 
     inline bool adj(const PType& a, const PType& b){
 
-        return ( abs(a.x - b.x) <= 1 || abs(a.y - b.y) <= 1);
+        return ( abs(a.x - b.x) <= 1 && abs(a.y - b.y) <= 1);
     }
 
 
@@ -54,11 +54,33 @@ namespace drawer{
         p.y = p.y * OFFSET + OFFSET;
     }
 
+    cv::Mat curve42points(PType a, PType b){
+        //Define the curve through equation. In this example, a simple parabola
+        std::vector<PType> curvePoints;
+
+        for (float x = a.x; x <= b.x; x+=1){
+            float y = 0.0425*x*x - 6.25*x + 258;
+            PType new_point = PType(x, y);                  //resized to better visualize]
+            projectToScreen(new_point);
+            curvePoints.push_back(new_point);                       //add point to vector/list
+        }
+
+        std::cout<<"hola\n";
+        for(auto it: curvePoints){
+            std::cout<<it.x<<" ";
+        }
+        std::cout<<'\n';
+        
+        cv::Mat curve(curvePoints, true);
+
+        return curve;
+    }
+
 
     void draw(cord_func pFunc, std::string fname){
 
 
-        cv::Mat imagen(DIM, DIM,CV_8UC3,cv::Scalar(0,0,0));
+        cv::Mat img(DIM, DIM,CV_8UC3,cv::Scalar(0,0,0));
         
         cv::Scalar colorLine(0,0,255);
         int grosor = 2;
@@ -73,18 +95,22 @@ namespace drawer{
             PType b = p2->first;
 
 
-            if(adj(a,b)){
+            // if(adj(a,b)){
                 projectToScreen(a);
                 projectToScreen(b);
-                cv::line(imagen, a, b, colorLine, grosor);            
-            }
-            else{
-                
-            }
+                cv::line(img, a, b, colorLine, grosor);            
+            // }
+            // else{
+            //     auto curve = curve42points(a,b);
+            //     curve.convertTo(curve, CV_32S);
+
+            //     polylines(img, curve, true, cv::Scalar(0,0,255), 2, CV_8UC3);
+
+            // }
             p1++;
         }
 
-        cv::imwrite("img/" + fname , imagen);
+        cv::imwrite("img/" + fname , img);
     }
 
 }

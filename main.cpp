@@ -6,9 +6,9 @@
 
 int main(){
 
-    zcord::draw();
+    // zcord::draw();
     gray::draw();
-    doubleGray::draw();
+    // doubleGray::draw();
 
     return 0;
 
