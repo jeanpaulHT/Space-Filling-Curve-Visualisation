@@ -14,25 +14,27 @@ namespace drawer{
 
 
     typedef std::function<int(int,int)> cord_func;
+    typedef  cv::Point PType;
 
 
-    std::vector<std::pair<cv::Point, int>> getcordinates(cord_func pFunc){
+
+    std::vector<std::pair<PType, int>> getcordinates(cord_func pFunc){
 
 
-        std::vector<std::pair<cv::Point, int>> res{};
+        std::vector<std::pair<PType, int>> res{};
 
         for(int y = 0; y < SIDEDIM; y++){
             
             for(int x = 0; x< SIDEDIM; x++){
                 int cord = pFunc(x,y);
-                res.push_back(  {cv::Point{ x,y}, cord } ); 
+                res.push_back(  {PType{ x,y}, cord } ); 
 
             }
         }
 
         std::sort(res.begin(), res.end(), []
-        (   const std::pair<cv::Point, int>& p1, 
-            const std::pair<cv::Point, int>& p2){
+        (   const std::pair<PType, int>& p1, 
+            const std::pair<PType, int>& p2){
             return p1.second < p2.second;
         });
 
@@ -40,7 +42,17 @@ namespace drawer{
     }
 
 
+    inline bool adj(const PType& a, const PType& b){
 
+        return ( abs(a.x - b.x) <= 1 || abs(a.y - b.y) <= 1);
+    }
+
+
+    
+    void projectToScreen(PType &p){
+        p.x = p.x * OFFSET + OFFSET;
+        p.y = p.y * OFFSET + OFFSET;
+    }
 
 
     void draw(cord_func pFunc, std::string fname){
@@ -56,10 +68,14 @@ namespace drawer{
         
         auto p1 = cord.begin();
         for(auto p2 =  cord.begin()+ 1; p2 != cord.end();p2++){
+            
 
-            cv::Point a = {(*p1).first.x * OFFSET + OFFSET,(*p1).first.y * OFFSET + OFFSET};
-            cv::Point b = {(*p2).first.x * OFFSET + OFFSET,(*p2).first.y * OFFSET + OFFSET};
+            PType a = p1->first;
+            PType b = p2->first;
 
+            projectToScreen(a);
+            projectToScreen(b);
+            
 
             cv::line(imagen, a, b, colorLine, grosor);
             p1++;
